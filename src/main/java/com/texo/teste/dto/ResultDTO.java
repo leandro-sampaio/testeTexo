@@ -5,18 +5,30 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class ResultDTO {
 
+    private long total;
     private Object sucessDTO;
     private ErroDTO erroDTO;
 
     public ResultDTO() {
     }
 
-    public ResultDTO(Object sucessDTO) {
+    public ResultDTO(long total, Object sucessDTO) {
+        this.total = total;
         this.sucessDTO = sucessDTO;
     }
 
     public ResultDTO(ErroDTO erroDTO) {
         this.erroDTO = erroDTO;
+    }
+
+    @JsonInclude(value = JsonInclude.Include.NON_NULL)
+    @JsonProperty("totalCidades")
+    public long getTotal() {
+        return total;
+    }
+
+    public void setTotal(long total) {
+        this.total = total;
     }
 
     @JsonInclude(value = JsonInclude.Include.NON_NULL)

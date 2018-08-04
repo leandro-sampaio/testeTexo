@@ -8,8 +8,8 @@ import java.util.List;
 
 public interface CityRepository extends MongoRepository<City, String> {
 
-    @Query("{'capital':true}")
-    List<City> getCapitais();
+    @Query("{'capital':?0}")
+    List<City> getCapitais(boolean isCapital);
 
     @Query(value = "{'_id':?0}")
     City findCityById(int id);
