@@ -2,6 +2,7 @@ package com.texo.teste.controller;
 
 import com.texo.teste.entity.City;
 import com.texo.teste.repository.CityRepository;
+import com.texo.teste.services.CityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -14,10 +15,10 @@ import java.util.List;
 public class CitiesController {
 
     @Autowired
-    private CityRepository cityRepository;
+    private CityService cityService;
 
     @RequestMapping(value = "/capitais", method = RequestMethod.GET)
     public List<City> getCapitalCities(){
-        return cityRepository.findCapitais();
+        return cityService.findCapitais();
     }
 }
