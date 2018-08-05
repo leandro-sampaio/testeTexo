@@ -1,5 +1,6 @@
 package com.texo.teste.services;
 
+import com.mongodb.DBObject;
 import com.texo.teste.dto.ErroDTO;
 import com.texo.teste.dto.ResultDTO;
 import com.texo.teste.entity.City;
@@ -9,6 +10,10 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.aggregation.Aggregation;
+import org.springframework.data.mongodb.core.aggregation.AggregationResults;
+import org.springframework.data.mongodb.core.aggregation.GroupOperation;
+import org.springframework.data.mongodb.core.aggregation.SortOperation;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.http.HttpStatus;
@@ -16,6 +21,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+
+import static org.springframework.data.mongodb.core.aggregation.Aggregation.group;
+import static org.springframework.data.mongodb.core.aggregation.Aggregation.newAggregation;
+import static org.springframework.data.mongodb.core.aggregation.Aggregation.sort;
 
 @Component
 public class CityService {
@@ -88,8 +97,27 @@ public class CityService {
             cities = mongoTemplate.find(query, City.class);
         }
         if(cities.size() == 0){
-            return new ResponseEntity<>(new ResultDTO(new ErroDTO(HttpStatus.BAD_REQUEST.value(), String.format("Nenhuma cidade encontrada."))), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new ResultDTO(new ErroDTO(HttpStatus.BAD_REQUEST.value(), "Nenhuma cidade encontrada.")), HttpStatus.BAD_REQUEST);
         }
         return new ResponseEntity<>(new ResultDTO(cities.size(), cities), HttpStatus.OK);
+    }
+
+    public ResponseEntity<ResultDTO> getMaiorMenorPorEstado() {
+
+        GroupOperation sumUf = group("uf").count().as("total");
+        SortOperation sortBytotal = sort(Sort.Direction.ASC, "total");
+        GroupOperation groupFirstAndLast = group().first("_id").as("minUf")
+                .first("total").as("minUfTotal").last("_id").as("maxUf")
+                .last("total").as("maxUfTotal");
+
+        Aggregation aggregation = newAggregation(sumUf, sortBytotal, groupFirstAndLast);
+
+        AggregationResults<DBObject> result = mongoTemplate
+                .aggregate(aggregation, "city", DBObject.class);
+
+        Object dbObject = result.getUniqueMappedResult();
+
+
+        return new ResponseEntity<>(new ResultDTO(dbObject), HttpStatus.OK);
     }
 }

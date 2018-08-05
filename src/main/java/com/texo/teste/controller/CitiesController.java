@@ -30,7 +30,9 @@ public class CitiesController {
     }
 
     @RequestMapping(value = "/maiorMenorPorEstado", method = RequestMethod.GET)
-    public ResponseEntity<ResultDTO> getMaiorMenorPorEstado(){return null;}
+    public ResponseEntity<ResultDTO> getMaiorMenorPorEstado(){
+        return cityService.getMaiorMenorPorEstado();
+    }
 
     @RequestMapping(params = {"page", "size"}, method = RequestMethod.GET)
     public ResponseEntity<ResultDTO> getPage(@RequestParam("page") int page, @RequestParam("size") int size){

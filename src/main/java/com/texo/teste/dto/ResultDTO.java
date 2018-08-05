@@ -17,6 +17,10 @@ public class ResultDTO {
         this.sucessDTO = sucessDTO;
     }
 
+    public ResultDTO(Object sucessDTO) {
+        this.sucessDTO = sucessDTO;
+    }
+
     public ResultDTO(ErroDTO erroDTO) {
         this.erroDTO = erroDTO;
     }
