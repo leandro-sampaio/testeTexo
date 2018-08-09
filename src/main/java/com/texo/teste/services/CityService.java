@@ -73,7 +73,7 @@ public class CityService {
         List<City> cities = null;
         Query query = new Query();
         if(ibgeId != null){
-            query.addCriteria(Criteria.where("ibgeId").regex(ibgeId.toString()));
+            query.addCriteria(Criteria.where("_id").is(ibgeId));
         }else if(uf != null){
             query.addCriteria(Criteria.where("uf").regex(uf));
         }else if(name != null){
@@ -85,13 +85,13 @@ public class CityService {
         }else if(longitude != null){
             query.addCriteria(Criteria.where("longitude").regex(longitude.toString()));
         }else if(noAccents != null){
-            query.addCriteria(Criteria.where("name").regex(noAccents));
+            query.addCriteria(Criteria.where("noAccents").regex(noAccents));
         }else if(alternativeNames != null){
-            query.addCriteria(Criteria.where("name").regex(alternativeNames));
+            query.addCriteria(Criteria.where("alternativeNames").regex(alternativeNames));
         }else if(microregion != null){
-            query.addCriteria(Criteria.where("name").regex(microregion));
+            query.addCriteria(Criteria.where("microregion").regex(microregion));
         }else if(mesoregion != null){
-            query.addCriteria(Criteria.where("name").regex(mesoregion));
+            query.addCriteria(Criteria.where("mesoregion").regex(mesoregion));
         }
         if(cities == null) {
             cities = mongoTemplate.find(query, City.class);

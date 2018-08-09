@@ -6,6 +6,8 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Document(collection = "city")
 public class City {
 
+    private Long hash;
+
     @Id
     private int ibgeId;
     private String uf;
@@ -19,6 +21,30 @@ public class City {
     private String mesoregion;
 
     public City() {
+    }
+
+    public City(int ibgeId) {
+        this.ibgeId = ibgeId;
+    }
+
+    public City(int ibgeId, String uf, String name, boolean capital) {
+        this.ibgeId = ibgeId;
+        this.uf = uf;
+        this.name = name;
+        this.capital = capital;
+    }
+
+    public City(int ibgeId, String uf, String name, boolean capital, double latitude, double longitude, String noAccents, String alternativeNames, String microregion, String mesoregion) {
+        this.ibgeId = ibgeId;
+        this.uf = uf;
+        this.name = name;
+        this.capital = capital;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.noAccents = noAccents;
+        this.alternativeNames = alternativeNames;
+        this.microregion = microregion;
+        this.mesoregion = mesoregion;
     }
 
     public int getIbgeId() {
@@ -99,5 +125,15 @@ public class City {
 
     public void setMesoregion(String mesoregion) {
         this.mesoregion = mesoregion;
+    }
+
+    @Override
+    public int hashCode() {
+        return this.hash.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return obj instanceof City && ((City) obj).ibgeId == this.ibgeId;
     }
 }

@@ -7,7 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/city")
+@RequestMapping("/cities")
 public class CitiesController {
 
     @Autowired
@@ -34,11 +34,11 @@ public class CitiesController {
         return cityService.getMaiorMenorPorEstado();
     }
 
-    @RequestMapping(params = {"page", "size"}, method = RequestMethod.GET)
+    @RequestMapping(value = "/byPage", params = {"page", "size"}, method = RequestMethod.GET)
     public ResponseEntity<ResultDTO> getPage(@RequestParam("page") int page, @RequestParam("size") int size){
         return cityService.getPage(page, size);}
 
-    @DeleteMapping("/deletar/{id}")
+    @RequestMapping(value = "/deletar/{id}", method = RequestMethod.PUT)
     public ResponseEntity<ResultDTO> deleteCity(@PathVariable int id){
         return cityService.removeCity(id);
     }
