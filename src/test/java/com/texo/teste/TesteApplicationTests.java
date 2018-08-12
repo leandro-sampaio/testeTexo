@@ -14,15 +14,18 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
+import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsCollectionContaining.hasItem;
 import static org.mockito.BDDMockito.given;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.hamcrest.core.Is.is;
 
 @RunWith(SpringRunner.class)
 @WebMvcTest(CitiesController.class)
@@ -42,10 +45,12 @@ public class TesteApplicationTests {
 	public void testGetCapitais() throws Exception {
         List<City> cities = this.getCities();
 
-		given(citiesController.getCapitalCities()).willReturn(new ResponseEntity<>(new ResultDTO(cities.stream().filter(City::getCapital)), HttpStatus.OK));
+        List<City> filtered = cities.stream().filter(City::getCapital).collect(Collectors.toList());
+		given(citiesController.getCapitalCities()).willReturn(new ResponseEntity<>(new ResultDTO(filtered.size(), filtered), HttpStatus.OK));
 		mockMvc.perform(get("/cities/capitais"))
 				.andExpect(status().isOk())
-				.andExpect(jsonPath("$.success[0].capital", is(true)));
+				.andExpect(jsonPath("$.success[0].capital", is(true)))
+                .andDo(print());
 
 	}
 
@@ -55,21 +60,32 @@ public class TesteApplicationTests {
 
 		City city = new City(111, "PR", "Curitiba", true);
 
+        List<City> filtered = cities.stream().filter(cityf -> cityf.getIbgeId() == city.getIbgeId()).collect(Collectors.toList());
         given(citiesController.getByAttribute(city.getIbgeId(), city.getUf(), city.getName(), city.getCapital(), city.getLatitude(),
 				city.getLongitude(), city.getNoAccents(), city.getAlternativeNames(), city.getMicroregion(), city.getMesoregion()))
-				.willReturn(new ResponseEntity<>(new ResultDTO(cities.stream().filter(cityf -> cityf.getIbgeId() == 111)), HttpStatus.OK));
+				.willReturn(new ResponseEntity<>(new ResultDTO(filtered.size(), filtered), HttpStatus.OK));
         mockMvc.perform(get("/cities/cityByAttribute"))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andDo(print());
 
     }
 
     @Test
     public void testGetMaiorMenorPorEstado() throws Exception {
         List<City> cities = this.getCities();
+        Map<String, Long> group = cities.stream().collect(Collectors.groupingBy(City::getUf, Collectors.counting()));
 
-        given(citiesController.getMaiorMenorPorEstado()).willReturn(new ResponseEntity<>(new ResultDTO(cities.stream().filter(city -> city.getIbgeId() == 111)), HttpStatus.OK));
+        Entry<String, Long> max = group.entrySet().stream().max(Entry.comparingByValue(Long::compareTo)).get();
+        Entry<String, Long> min = group.entrySet().stream().min(Entry.comparingByValue(Long::compareTo)).get();
+
+        List<Entry<String, Long>> result = new ArrayList<>();
+        result.add(max);
+        result.add(min);
+
+        given(citiesController.getMaiorMenorPorEstado()).willReturn(new ResponseEntity<>(new ResultDTO(result), HttpStatus.OK));
         mockMvc.perform(get("/cities/maiorMenorPorEstado"))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andDo(print());
 
     }
 
@@ -80,19 +96,27 @@ public class TesteApplicationTests {
         int size = 5;
         int page = 1;
         int skip = size * (page - 1);
-        given(citiesController.getPage(page, size)).willReturn(new ResponseEntity<>(new ResultDTO(cities.stream().skip(skip).limit(size)), HttpStatus.OK));
-        mockMvc.perform(get("/cities/cityByAttribute"))
-                .andExpect(status().isOk());
+        List<City> filtered = cities.stream().skip(skip).limit(size).collect(Collectors.toList());
+        given(citiesController.getPage(page, size)).willReturn(new ResponseEntity<>(new ResultDTO(filtered.size()
+                , filtered), HttpStatus.OK));
+        mockMvc.perform(get("/cities/byPage")
+                .param("page", String.valueOf(page))
+                .param("size", String.valueOf(size)))
+                .andExpect(status().isOk())
+                .andDo(print());
 
     }
 
     @Test
     public void testPutDeletar() throws Exception {
-        City city = new City(111, "PR", "Curitiba", true);
+        List<City> cities = this.getCities();
+
+	    City city = new City(111, "PR", "Curitiba", true);
 
         given(citiesController.deleteCity(city.getIbgeId())).willReturn(new ResponseEntity<>(new ResultDTO(), HttpStatus.OK));
-        mockMvc.perform(put("/cities/deletar/"+city.getIbgeId()))
-                .andExpect(status().isOk());
+        mockMvc.perform(delete("/cities/deletar/{id}", city.getIbgeId()))
+                .andExpect(status().isOk())
+                .andDo(print());
 
     }
 
@@ -107,6 +131,7 @@ public class TesteApplicationTests {
 		cities.add(new City(117, "SC", "Joinville", false));
 		cities.add(new City(118, "SC", "Florianópolis", true));
 		cities.add(new City(119, "SC", "Blumenau", true));
+		cities.add(new City(119, "SC", "Chapecó", true));
 		return cities;
 	}
 }

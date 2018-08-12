@@ -10,11 +10,25 @@ https://www.mongodb.com/download-center#community
 IDE Robomongo para visualização dos dados da base
 https://robomongo.org/download
 
-#para execução do projeto...
 
-#para executar os testes...
+#para execução do projeto realizar o download do Gradle
+https://gradle.org/releases/
+
+configurar variavel de ambiente
+Ex. C:\Gradle\gradle-4.9\bin
+
+#Arquivo de configuração do projeto
+application.properties
+
+
+#para executar os testes
+abrir o CMD na pasta raiz do projeto e executar o comando -> Gradlew test
+
+#para executar o projeto
+abrir o CMD na pasta raiz do projeto e executar o comando -> Gradlew bootRun
 
 As alteracões das configurações da base, porta e local do arquivo csv, devem ser realizadas no arquivo application.properties
+em src/main/resources
 
 #porta:8082
 

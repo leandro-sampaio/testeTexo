@@ -16,13 +16,27 @@ apply plugin: 'org.springframework.boot'
 apply plugin: 'io.spring.dependency-management'
 
 group = 'com.texo'
-version = '0.0.1-SNAPSHOT'
+archivesBaseName = 'cities-rest'
+version = '1.0'
 sourceCompatibility = 1.8
 
 repositories {
 	mavenCentral()
 }
 
+test {
+	testLogging {
+		events "standardOut", "started", "passed", "skipped", "failed"
+	}
+}
+
+jar{
+    baseName = 'cities-rest'
+    version = '1.0'
+	manifest{
+		attributes('Main-Class': 'com.texo.teste.TesteApplication')
+	}
+}
 
 dependencies {
 	compile('org.springframework.boot:spring-boot-starter')

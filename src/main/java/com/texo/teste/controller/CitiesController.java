@@ -38,8 +38,8 @@ public class CitiesController {
     public ResponseEntity<ResultDTO> getPage(@RequestParam("page") int page, @RequestParam("size") int size){
         return cityService.getPage(page, size);}
 
-    @RequestMapping(value = "/deletar/{id}", method = RequestMethod.PUT)
-    public ResponseEntity<ResultDTO> deleteCity(@PathVariable int id){
+    @RequestMapping(value = "/deletar/{id}", method = RequestMethod.DELETE)
+    public ResponseEntity<ResultDTO> deleteCity(@PathVariable("id") int id){
         return cityService.removeCity(id);
     }
 }
