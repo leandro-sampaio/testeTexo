@@ -1,8 +1,8 @@
-#API Rest para leitura e manutenção de uma	lista de cidades
+# API Rest para leitura e manutenção de uma	lista de cidades
 
-#Arquitetura de microserviço em Spring boot
+# Arquitetura de microserviço em Spring boot
 
-#Utilizado MongoDB para manutenção dos dados
+# Utilizado MongoDB para manutenção dos dados
 Base Mongo Download
 https://www.mongodb.com/download-center#community
 
@@ -11,29 +11,28 @@ IDE Robomongo para visualização dos dados da base
 https://robomongo.org/download
 
 
-#para execução do projeto realizar o download do Gradle
+# para execução do projeto realizar o download do Gradle
 https://gradle.org/releases/
 
 configurar variavel de ambiente
 Ex. C:\Gradle\gradle-4.9\bin
 
-#Arquivo de configuração do projeto
+# Arquivo de configuração do projeto
 application.properties
 
 
-#para executar os testes
+# para executar os testes
 abrir o CMD na pasta raiz do projeto e executar o comando -> Gradlew test
 
-#para executar o projeto
+# para executar o projeto
 abrir o CMD na pasta raiz do projeto e executar o comando -> Gradlew bootRun
 
 As alteracões das configurações da base, porta e local do arquivo csv, devem ser realizadas no arquivo application.properties
 em src/main/resources
 
-#porta:8082
+# porta:8082
 
-#curl
-Obtém todas as capitais
+3 Obtém todas as capitais
 GET - cities/capitais
 
 retorno
@@ -56,7 +55,7 @@ retorno
     "hasError": false
 }
 
-#obtém a lista de cidades pesquisada por um atributo, nome, uf etc.
+# obtém a lista de cidades pesquisada por um atributo, nome, uf etc.
 GET - cities/cityByAttribute?name=maria
 
 @RequestParam -> qualquer atributo referente a cidade
@@ -81,7 +80,7 @@ retorno
     "hasError": false
 }
 
-#obtém o estado com o maior numero de cidades e o estado com o menor numero de cidades e a quantidade
+# obtém o estado com o maior numero de cidades e o estado com o menor numero de cidades e a quantidade
 
 GET - cities/maiorMenorPorEstado
 
@@ -99,7 +98,7 @@ retorno
     "hasError": false
 }
 
-#obtém uma pagina das cidades
+# obtém uma pagina das cidades
 
 @RequestParam:
 page -> o numero da pagina
@@ -139,7 +138,7 @@ GET - cities/byPage?page=1&size=2
 }
 
 
-#deletar uma cidades
+# deletar uma cidades
 
 PUT - cities/deletar/{ibgeId}
 
